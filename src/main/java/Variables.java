@@ -1,8 +1,6 @@
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 public class Variables {
 
@@ -12,6 +10,15 @@ public class Variables {
     public static String messageId="";
     public static String activeButton="";
     public static final String prefix="!";
+
+    public static String botToken="";
+    public static String factionName="";
+
+    public static String jdbcConnectionString = "jdbc:mysql://161.97.78.70:3306/s22792_DiscordBotServer";
+    public static String dbUser = "u22792_tTKRyZ1RL2";
+    public static String dbPassword = "Qb0qJ=reI=bX@y0+cCI2UW1E";
+
+
 
     public static EmbedBuilder CreateEmbed(){
 

@@ -1,15 +1,10 @@
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.utils.FileUpload;
-import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageEditData;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 public class ButtonListener extends ListenerAdapter {
 
@@ -23,12 +18,6 @@ public class ButtonListener extends ListenerAdapter {
 
                 File file=CreateCSV.writeDataLineByLine("Prämie.csv");
 
-                /*
-                Variables.payment="";
-                Variables.persons=new HashSet<>();
-                Variables.comment="Prämie";
-
-                 */
                 event.reply("").addFiles(FileUpload.fromData(file)).setEphemeral(true).queue();
 
                 break;
