@@ -4,7 +4,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import net.dv8tion.jda.api.utils.FileUpload;
 
+import javax.xml.crypto.Data;
 import java.io.File;
+import java.sql.SQLException;
 
 public class ButtonListener extends ListenerAdapter {
 
@@ -17,6 +19,15 @@ public class ButtonListener extends ListenerAdapter {
             case "downloadButton":
 
                 File file=CreateCSV.writeDataLineByLine("Prämie.csv");
+
+                //Database.InsertCurrentBonus();
+                Variables.guildId=event.getGuild().getId();
+                Variables.guildName=event.getGuild().getName();
+                try {
+                    Database.InsertCurrentBonus();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
 
                 event.reply("").addFiles(FileUpload.fromData(file)).setEphemeral(true).queue();
 

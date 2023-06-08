@@ -1,5 +1,7 @@
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Database {
@@ -21,7 +23,7 @@ public class Database {
 
         //create table Guild
         connection.createStatement().execute("CREATE TABLE IF NOT EXISTS Guild (" +
-                "GuildId INT NOT NULL," +
+                "GuildId BIGINT NOT NULL," +
                 "GuildName TINYTEXT NOT NULL," +
                 "SelectedChannel TINYTEXT," +
                 "PRIMARY KEY (GuildId));"
@@ -30,7 +32,7 @@ public class Database {
         //create table Bonus
         connection.createStatement().execute("CREATE TABLE IF NOT EXISTS Bonus (" +
                 "BonusId INT NOT NULL AUTO_INCREMENT," +
-                "GuildId INT NOT NULL," +
+                "GuildId BIGINT NOT NULL," +
                 "CreationDate DATETIME NOT NULL," +
                 "TotalPayment INT," +
                 "Comment TINYTEXT," +
@@ -49,7 +51,7 @@ public class Database {
 
         //create table Person
         connection.createStatement().execute("CREATE TABLE IF NOT EXISTS Person (" +
-                "PersonId INT NOT NULL," +
+                "PersonId BIGINT NOT NULL," +
                 "DetailId INT NOT NULL," +
                 "EffectiveName TINYTEXT," +
                 "StaticId INT," +
@@ -58,5 +60,35 @@ public class Database {
         );
 
         System.out.println("Verbindung erfolgreich hergestellt");
+    }
+
+    public static void InsertCurrentBonus() throws SQLException {
+
+        Connection connection = DriverManager.getConnection(
+                Variables.jdbcConnectionString,
+                Variables.dbUser,
+                Variables.dbPassword
+        );
+
+
+
+        PreparedStatement searchGuildId = connection.prepareStatement("SELECT * from Guild WHERE GuildId = ? LIMIT 1");
+        searchGuildId.setLong(1,Long.parseLong(Variables.guildId));
+        var ResultSearchGuildId =searchGuildId.executeQuery();
+
+        if (ResultSearchGuildId.next()){
+            //Guild exists
+            System.out.println(ResultSearchGuildId.getLong(1));
+            System.out.println(ResultSearchGuildId.getString(2));
+            System.out.println(ResultSearchGuildId.getString(3));
+        }else {
+            PreparedStatement insertNewGuild=connection.prepareStatement(
+                    "INSERT INTO Guild values (?,?,?)");
+            insertNewGuild.setLong(1,Long.parseLong(Variables.guildId));
+            insertNewGuild.setString(2,Variables.guildName);
+            insertNewGuild.setString(3,Variables.selectedChannel);
+            insertNewGuild.execute();
+        }
+
     }
 }
