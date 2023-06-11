@@ -1,10 +1,14 @@
+import com.google.protobuf.MapEntry;
+import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Variables {
 
-    public static HashSet<String> persons = new HashSet<>();
+    public static Map<Long,String> persons = new HashMap<>() {
+    };
     public static String payment="";
     public static String comment="Prämie";
 
@@ -14,6 +18,7 @@ public class Variables {
     public static String activeButton="";
     public static final String prefix="!";
     public static final String selectedChannel=null;
+    public static Pair<Long,String> creator;
 
     public static String botToken="";
     public static String factionName="";
@@ -31,8 +36,8 @@ public class Variables {
                 .setDescription(":busts_in_silhouette: "+ Variables.persons.size() +" Personen \n ")
                 .setThumbnail("https://cdn-icons-png.flaticon.com/512/2150/2150150.png");
 
-        for (String p :Variables.persons) {
-            embedBuilder.appendDescription("* "+p + " \n");
+        for (Map.Entry<Long,String> person :Variables.persons.entrySet()) {
+            embedBuilder.appendDescription("* "+person.getValue() + " \n");
         }
         embedBuilder.appendDescription("\n :money_with_wings: Bezahlung pro Person\n");
         if (!Variables.payment.equals("")){

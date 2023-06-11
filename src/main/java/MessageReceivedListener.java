@@ -1,11 +1,8 @@
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 
 public class MessageReceivedListener extends ListenerAdapter {
 
@@ -77,7 +74,7 @@ public class MessageReceivedListener extends ListenerAdapter {
     public void RemovePerson(String input, MessageReceivedEvent event){
 
         if (input.strip().equalsIgnoreCase("alle")||input.strip().equalsIgnoreCase("all")){
-            Variables.persons=new HashSet<>();
+            Variables.persons=new HashMap<>();
             return;
         }
 
@@ -86,10 +83,10 @@ public class MessageReceivedListener extends ListenerAdapter {
         for (Member member:members) {
             if (member.getEffectiveName().contains("|")){
                 if (member.getEffectiveName().split("\\|")[1].strip().equals(input.strip())){
-                    Variables.persons.remove(member.getEffectiveName());
+                    Variables.persons.remove(member.getIdLong());
                 }
             } else if (member.getEffectiveName().equalsIgnoreCase(input)) {
-                Variables.persons.remove(member.getEffectiveName());
+                Variables.persons.remove(member.getIdLong());
             }
         }
     }
@@ -100,12 +97,12 @@ public class MessageReceivedListener extends ListenerAdapter {
 
         for (Member member:members) {
             if (member.getEffectiveName().equalsIgnoreCase(input)){
-                Variables.persons.add(member.getEffectiveName());
+                Variables.persons.put(member.getIdLong(),member.getEffectiveName());
                 return;
             }
             if (member.getEffectiveName().contains("|")){
                 if (member.getEffectiveName().split("\\|")[1].strip().equals(input.strip())){
-                    Variables.persons.add(member.getEffectiveName());
+                    Variables.persons.put(member.getIdLong(),member.getEffectiveName());
                     return;
                 }
             }

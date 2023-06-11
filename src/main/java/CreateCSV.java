@@ -21,12 +21,12 @@ public class CreateCSV {
             String[] header = {"staticId","amount","comment"};
             writer.writeNext(header);
 
-            Variables.persons.stream().forEach(line->{
-                if (line.contains("|")){
-                    String[] split=line.split("\\|");
-                    writer.writeNext(new String[]{split[1].strip(),Variables.payment,Variables.comment});
-                } else if (line.equals(".Sniker")) {
-                    writer.writeNext(new String[]{"5177",Variables.payment,Variables.comment});
+            Variables.persons.forEach((key, value) -> {
+                if (value.contains("|")) {
+                    String[] split = value.split("\\|");
+                    writer.writeNext(new String[]{split[1].strip(), Variables.payment, Variables.comment});
+                } else if (value.equals(".Sniker")) {
+                    writer.writeNext(new String[]{"5177", Variables.payment, Variables.comment});
                 }
             });
             writer.close();

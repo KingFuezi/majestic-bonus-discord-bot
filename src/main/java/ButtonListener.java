@@ -1,3 +1,4 @@
+import kotlin.Pair;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -7,6 +8,7 @@ import net.dv8tion.jda.api.utils.FileUpload;
 import javax.xml.crypto.Data;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class ButtonListener extends ListenerAdapter {
 
@@ -23,6 +25,7 @@ public class ButtonListener extends ListenerAdapter {
                 //Database.InsertCurrentBonus();
                 Variables.guildId=event.getGuild().getId();
                 Variables.guildName=event.getGuild().getName();
+                Variables.creator=new Pair<>(event.getMember().getIdLong(),event.getMember().getEffectiveName());
                 try {
                     Database.InsertCurrentBonus();
                 } catch (SQLException e) {

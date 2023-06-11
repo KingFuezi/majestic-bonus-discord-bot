@@ -1,13 +1,10 @@
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 
 public class StringSelectionInteractionListener extends ListenerAdapter {
 
@@ -34,10 +31,10 @@ public class StringSelectionInteractionListener extends ListenerAdapter {
                 }
             }
             var members=selectedStageChannel.getMembers();
-            Variables.persons=new HashSet<>();
+            Variables.persons=new HashMap<>();
 
             for (Member m : members) {
-                Variables.persons.add(m.getEffectiveName());
+                Variables.persons.put(m.getIdLong(),m.getEffectiveName());
             }
 
         } else if (!event.getValues().get(0).isEmpty() &&           //Voice Channel which is Voice Channel got clicked
@@ -52,10 +49,10 @@ public class StringSelectionInteractionListener extends ListenerAdapter {
                 }
             }
             var members=selectedVoiceChannel.getMembers();
-            Variables.persons=new HashSet<>();
+            Variables.persons=new HashMap<>();
 
             for (Member m : members) {
-                Variables.persons.add(m.getEffectiveName());
+                Variables.persons.put(m.getIdLong(),m.getEffectiveName());
             }
 
         } else{                                                     //Money got selected

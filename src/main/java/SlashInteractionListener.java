@@ -1,16 +1,12 @@
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ItemComponent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 
 
 public class SlashInteractionListener extends ListenerAdapter  {
@@ -19,7 +15,7 @@ public class SlashInteractionListener extends ListenerAdapter  {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event){
 
         Variables.payment="";
-        Variables.persons=new HashSet<>();
+        Variables.persons=new HashMap<>();
         Variables.comment="Prämie";
 
         //select menu with A,A as placeholder (need 1 Option to create)
