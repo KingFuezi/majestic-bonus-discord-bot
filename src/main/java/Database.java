@@ -1,4 +1,3 @@
-import java.math.BigInteger;
 import java.sql.*;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class Database {
         //create table Person
         connection.createStatement().execute("CREATE TABLE IF NOT EXISTS Person (" +
                 "PersonId BIGINT NOT NULL," +
-                "EffectiveName TINYTEXT," +
+                "FullName TINYTEXT," +
                 "StaticId INT," +
                 "PRIMARY KEY (PersonId));"
         );
@@ -99,7 +98,7 @@ public class Database {
                     "INSERT INTO Person values (?,?,?)"
             );
             insertCreator.setLong(1,Variables.creator.getFirst());
-            insertCreator.setString(2,Variables.creator.getSecond());
+            insertCreator.setString(2,Variables.creator.getSecond().split("\\s+")[1]+" "+Variables.creator.getSecond().split("\\s+")[2] );
             insertCreator.setInt(3,Integer.parseInt(Variables.creator.getSecond().split("\\|")[1].strip()));
             insertCreator.execute();
         }
@@ -114,7 +113,7 @@ public class Database {
         insertBonus.setString(4,Variables.comment);
         insertBonus.execute();
 
-        //Search for Bonus to get Id for BonusDetail
+        //Search for Bonus to get id for BonusDetail
         ResultSet resultSearchBonusId = connection.createStatement().executeQuery("SELECT MAX(BonusId) from Bonus");
         resultSearchBonusId.next();
 
@@ -133,7 +132,7 @@ public class Database {
                         "INSERT INTO Person values (?,?,?)"
                 );
                 insertPerson.setLong(1,person.getKey());
-                insertPerson.setString(2,person.getValue());
+                insertPerson.setString(2,person.getValue().split("\\s+")[1]+" "+person.getValue().split("\\s+")[2]);
                 insertPerson.setInt(3,Integer.parseInt(person.getValue().split("\\|")[1].strip()));
                 insertPerson.execute();
             }
