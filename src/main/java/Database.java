@@ -1,3 +1,5 @@
+import kotlin.Pair;
+
 import java.sql.*;
 import java.util.Map;
 
@@ -18,11 +20,14 @@ public class Database {
         connection.createStatement().execute("DROP TABLE IF EXISTS Guild;");
 
 
+
+
         //create table Guild
         connection.createStatement().execute("CREATE TABLE IF NOT EXISTS Guild (" +
                 "GuildId BIGINT NOT NULL," +
                 "GuildName TINYTEXT NOT NULL," +
                 "SelectedChannel TINYTEXT," +
+                "ChannelId BIGINT," +
                 "PRIMARY KEY (GuildId));"
         );
 
@@ -63,7 +68,7 @@ public class Database {
         System.out.println("Verbindung erfolgreich hergestellt");
     }
 
-    public static void InsertCurrentBonus() throws SQLException {
+    public static void InsertCurrentBonus(long guildId, String guildName, long channelId, String channelName, Pair<Long,String> creator) throws SQLException {
 
         Connection connection = DriverManager.getConnection(
                 Variables.jdbcConnectionString,
@@ -71,25 +76,11 @@ public class Database {
                 Variables.dbPassword
         );
 
-
-
-        PreparedStatement searchGuildId = connection.prepareStatement("SELECT * from Guild WHERE GuildId = ? LIMIT 1");
-        searchGuildId.setLong(1,Long.parseLong(Variables.guildId));
-        ResultSet resultSearchGuildId =searchGuildId.executeQuery();
-
-        //if guild does not exist it gets created first
-        if (!resultSearchGuildId.next()){
-            PreparedStatement insertNewGuild=connection.prepareStatement(
-                    "INSERT INTO Guild values (?,?,?)");
-            insertNewGuild.setLong(1,Long.parseLong(Variables.guildId));
-            insertNewGuild.setString(2,Variables.guildName);
-            insertNewGuild.setString(3,Variables.selectedChannel);
-            insertNewGuild.execute();
-        }
+        InsertOrUpdateGuild(guildId, guildName,  channelId,  channelName);
 
 
         PreparedStatement searchCreatorId = connection.prepareStatement("SELECT * from Person WHERE PersonId = ? LIMIT 1");
-        searchCreatorId.setLong(1,Variables.creator.getFirst());
+        searchCreatorId.setLong(1,creator.getFirst());
         ResultSet resultSearchCreatorId =searchCreatorId.executeQuery();
 
         //if creator person does not exist it gets created first
@@ -97,9 +88,9 @@ public class Database {
             PreparedStatement insertCreator = connection.prepareStatement(
                     "INSERT INTO Person values (?,?,?)"
             );
-            insertCreator.setLong(1,Variables.creator.getFirst());
-            insertCreator.setString(2,Variables.creator.getSecond().split("\\s+")[1]+" "+Variables.creator.getSecond().split("\\s+")[2] );
-            insertCreator.setInt(3,Integer.parseInt(Variables.creator.getSecond().split("\\|")[1].strip()));
+            insertCreator.setLong(1,creator.getFirst());
+            insertCreator.setString(2,creator.getSecond().split("\\s+")[1]+" "+creator.getSecond().split("\\s+")[2] );
+            insertCreator.setInt(3,Integer.parseInt(creator.getSecond().split("\\|")[1].strip()));
             insertCreator.execute();
         }
 
@@ -107,8 +98,8 @@ public class Database {
         PreparedStatement insertBonus = connection.prepareStatement(
                 "INSERT INTO Bonus(GuildId,CreationDate,CreatorId,TotalPayment,Comment) values (?,NOW(),?,?,?)"
         );
-        insertBonus.setLong(1,Long.parseLong(Variables.guildId));
-        insertBonus.setLong(2,Variables.creator.getFirst());
+        insertBonus.setLong(1,guildId);
+        insertBonus.setLong(2,creator.getFirst());
         insertBonus.setInt(3,Variables.persons.size() * Integer.parseInt(Variables.payment));
         insertBonus.setString(4,Variables.comment);
         insertBonus.execute();
@@ -147,5 +138,40 @@ public class Database {
             insertBonusDetail.setInt(3,Integer.parseInt(Variables.payment));
             insertBonusDetail.execute();
         }
+    }
+
+    public static void InsertOrUpdateGuild(long guildId, String guildName, long channelId, String channelName) throws SQLException {
+
+        Connection connection = DriverManager.getConnection(
+                Variables.jdbcConnectionString,
+                Variables.dbUser,
+                Variables.dbPassword
+        );
+
+        PreparedStatement searchGuildId = connection.prepareStatement("SELECT * from Guild WHERE GuildId = ?");
+        searchGuildId.setLong(1,guildId);
+        ResultSet resultSearchGuildId =searchGuildId.executeQuery();
+
+        //if guild does not exist it gets created first
+        if (!resultSearchGuildId.next()){
+            PreparedStatement insertNewGuild=connection.prepareStatement(
+                    "INSERT INTO Guild(GuildId,GuildName,SelectedChannel,ChannelId) values (?,?,?,?)");
+            insertNewGuild.setLong(1,guildId);
+            insertNewGuild.setString(2,guildName);
+            insertNewGuild.setString(3,channelName);
+            insertNewGuild.setLong(4,channelId);
+            insertNewGuild.execute();
+        }else{
+
+            PreparedStatement updateChannel = connection.prepareStatement(
+                    "UPDATE Guild SET SelectedChannel = ?, ChannelId = ? WHERE GuildId = ?"
+            );
+            updateChannel.setString(1,channelName);
+            updateChannel.setLong(2,channelId);
+            updateChannel.setLong(3,guildId);
+            updateChannel.executeUpdate();
+        }
+
+        connection.close();
     }
 }

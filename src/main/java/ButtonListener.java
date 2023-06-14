@@ -22,12 +22,14 @@ public class ButtonListener extends ListenerAdapter {
 
                 File file=CreateCSV.writeDataLineByLine("Prämie.csv");
 
-                //Database.InsertCurrentBonus();
-                Variables.guildId=event.getGuild().getId();
-                Variables.guildName=event.getGuild().getName();
-                Variables.creator=new Pair<>(event.getMember().getIdLong(),event.getMember().getEffectiveName());
                 try {
-                    Database.InsertCurrentBonus();
+                    Database.InsertCurrentBonus(
+                            event.getGuild().getIdLong(),
+                            event.getGuild().getName(),
+                            event.getInteraction().getChannel().getIdLong(),
+                            event.getInteraction().getChannel().getName(),
+                            new Pair<>(event.getMember().getIdLong(),event.getMember().getEffectiveName())
+                    );
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

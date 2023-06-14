@@ -13,12 +13,8 @@ public class Variables {
     public static String comment="Prämie";
 
     public static String messageId="";
-    public static String guildId="";
-    public static String guildName="";
     public static String activeButton="";
     public static final String prefix="!";
-    public static final String selectedChannel=null;
-    public static Pair<Long,String> creator;
 
     public static String botToken="";
     public static String factionName="";

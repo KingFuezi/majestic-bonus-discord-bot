@@ -27,6 +27,7 @@ public class Main implements EventListener {
                 .awaitReady();
 
         jda.upsertCommand("prämie","Prämie erstellen!").queue();
+        jda.upsertCommand("set-channel","Channel auswählen!").queue();
 
         Database.CreateDB();
     }

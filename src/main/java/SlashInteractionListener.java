@@ -1,4 +1,5 @@
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.concrete.StageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -6,6 +7,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
+import javax.management.relation.Role;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 
@@ -98,6 +101,28 @@ public class SlashInteractionListener extends ListenerAdapter  {
                     .addActionRow(downloadbutton,addPersonButton,removePersonButton,editCommentButton,refreshButton)
                     //.setEphemeral(true) //TODO
                     .queue();
+        } else if (event.getInteraction().getName().equalsIgnoreCase("set-channel")) {
+
+            var roleList = event.getInteraction().getMember().getRoles();
+            for (var role : roleList) {
+                if (role.hasPermission(Permission.ADMINISTRATOR)){
+                    try {
+                        Database.InsertOrUpdateGuild(
+                                event.getGuild().getIdLong(),
+                                event.getGuild().getName(),
+                                event.getChannel().getIdLong(),
+                                event.getChannel().getName()
+                        );
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    event.reply("Dieser Channel wurde nun für den Bot ausgewählt!").setEphemeral(true).queue();
+                    return;
+                }
+            }
+            event.reply("Sie sind kein Administrator!").setEphemeral(true).queue();
+
         }
     }
 
