@@ -64,7 +64,7 @@ public class Database {
                 "FOREIGN KEY (PersonId) REFERENCES Person(PersonId));"
         );
 
-
+        connection.close();
         System.out.println("Verbindung erfolgreich hergestellt");
     }
 
@@ -137,6 +137,8 @@ public class Database {
             insertBonusDetail.setLong(2,person.getKey());
             insertBonusDetail.setInt(3,Integer.parseInt(Variables.payment));
             insertBonusDetail.execute();
+
+            //connection.close();
         }
     }
 
@@ -173,5 +175,27 @@ public class Database {
         }
 
         connection.close();
+    }
+
+    //returns 0 if guild does not exist
+    public static long GetChannelId(long guildId) throws SQLException {
+
+        Connection connection = DriverManager.getConnection(
+                Variables.jdbcConnectionString,
+                Variables.dbUser,
+                Variables.dbPassword
+        );
+
+        PreparedStatement getChannelId = connection.prepareStatement("SELECT * from Guild WHERE GuildId = ?");
+        getChannelId.setLong(1,guildId);
+        ResultSet resultGetChannelId =getChannelId.executeQuery();
+        long returnValue = 0;
+
+
+        if (resultGetChannelId.next()){
+            returnValue = resultGetChannelId.getLong(4);
+        }
+        //connection.close();
+        return returnValue;
     }
 }
